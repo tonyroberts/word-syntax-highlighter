@@ -7,7 +7,7 @@ describe('Highlight Python', () => {
     it('Should highlight a number', () => {
         let result = [];
 
-        highlighter.highlight("Python", "1", (cls, text) => {
+        highlighter.highlight("Python", 'Default',"1", (cls, text) => {
             result.push([cls, text]);
         })
 
@@ -30,7 +30,7 @@ describe('Highlight Python', () => {
             '    i = 100';
 
         let result = '';
-        highlighter.highlight("Pgsql", script, (_, text) => {
+        highlighter.highlight("Pgsql", 'Default', script, (_, text) => {
             result += text;
         })
 

@@ -1,8 +1,9 @@
 
 import * as hljs from "highlight.js";
 import * as xmldom from 'xmldom';
+import * as styles from "./styles";
 
-const languages = {
+export const languages = {
     'Auto Detect': null,
     '1c': '1c',
     'Abnf': 'abnf',
@@ -193,8 +194,9 @@ const languages = {
 
 
 export function highlight(languageName: string,
+                          themeName: string,
                           text: string,
-                          callback: (cls: string, text: string) => void): void {
+                          callback: (cls: string, text: string) => void): string {
     let language = languages[languageName];
     if (language === undefined) {
         throw new Error("Unknown language '" + languageName + "'");
@@ -202,30 +204,51 @@ export function highlight(languageName: string,
 
     // Use highlight.js to get html highlighted version of the text
     var fragment = language ? hljs.highlight(language, text) : hljs.highlightAuto(text);
-    var html = '<div>' + fragment.value + '</div>'
+    var html = '<div class="hljs"><pre><code>' + fragment.value + '\r\n </code></pre></div>'
 
     // Parse the result into a DOM
     let parser = new xmldom.DOMParser();
     let dom = parser.parseFromString(html, "text/html");
 
     function walk(node: Node, cls: string = null) {
+        // Add extra styling to the node
+        let nodeClass = null;
+        if (node.nodeType == node.ELEMENT_NODE)
+        {
+            let element = node as Element;
+            nodeClass = element.getAttribute("class");
+
+            // strip the leading hljs- from the class name
+            if (nodeClass && nodeClass.search(/^hljs-/) == 0) {
+                nodeClass = nodeClass.substr(5);
+            }
+
+            if (nodeClass) {
+                let style = styles.getStyle(themeName, nodeClass);
+                if (style) {
+                    let css: string[] = [];
+                    for (let key of Object.keys(style)) {
+                        let value = style[key];
+                        if (value) {
+                            css.push(`${key}: '${value}'`);
+                        }
+                    }
+                    element.setAttribute('style', css.join(';'));
+                }
+            }
+        }
+
         // If we've found a text node, call the callback with the current class and the text
-        if (node.nodeType == node.TEXT_NODE) {
+        if (node.nodeType == node.TEXT_NODE && callback) {
             callback(cls, node.textContent);
         }
 
         // Traverse down into the children nodes
         if (node.hasChildNodes()) {
-            // If we come across a span element the class from it
+            // If we come across a span element use its class as the child class for the next elements
             let childCls = null;
             if (node.nodeType == node.ELEMENT_NODE && node.nodeName == "span") {
-                let element = node as Element;
-                childCls = element.getAttribute("class");
-
-                // strip the leading hljs- from the class name
-                if (childCls && childCls.search(/^hljs-/) == 0) {
-                    childCls = childCls.substr(5);
-                }
+                childCls = nodeClass;
             }
 
             walk(node.firstChild, childCls);
@@ -239,6 +262,8 @@ export function highlight(languageName: string,
     }
 
     walk(dom.documentElement);
+
+    return dom.documentElement.toString();
 }
 
 

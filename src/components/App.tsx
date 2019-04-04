@@ -1,11 +1,13 @@
 import * as React from 'react';
-import { Button, ButtonType } from 'office-ui-fabric-react';
+import { PrimaryButton, DefaultButton } from 'office-ui-fabric-react';
 import Header from './Header';
 import Progress from './Progress';
 import {MessageList, MessageBarType} from './MessageList';
 import * as highlighter from "../utils/highlighter";
 import * as styles from "../utils/styles";
-import {highlightSelection} from '../functions';
+import {highlightSelection, insertHighlightedText} from '../functions';
+import {changeTheme} from '../utils/themes';
+import Snippet from "./Snippet";
 
 
 
@@ -17,7 +19,6 @@ export interface AppProps {
 export interface AppState {
     language: string;
     theme: string;
-    setHighlightColor: boolean;
 }
 
 export default class App extends React.Component<AppProps, AppState> {
@@ -25,14 +26,13 @@ export default class App extends React.Component<AppProps, AppState> {
         super(props, context);
         this.state = {
             language: "Auto Detect",
-            theme: "Default",
-            setHighlightColor: false
+            theme: "Default"
         };
 
         this.handleSetLanguage = this.handleSetLanguage.bind(this);
         this.handleSetTheme = this.handleSetTheme.bind(this);
-        this.handleSetHighlightColor = this.handleSetHighlightColor.bind(this);
-        this.click = this.click.bind(this);
+        this.highlightSelection = this.highlightSelection.bind(this);
+        this.copySnippet = this.copySnippet.bind(this);
     }
 
     componentDidMount() {
@@ -48,16 +48,18 @@ export default class App extends React.Component<AppProps, AppState> {
             let theme = settings.get("theme");
             if (theme) {
                 this.setState({theme: theme});
-            }
-
-            let setHighlightColor = settings.get("setHighlightColor");
-            if (setHighlightColor != undefined) {
-                this.setState({setHighlightColor: setHighlightColor});
+                changeTheme(theme);
             }
         }
     }
 
-    async click() {
+    componentWillUpdate(_nextProps: AppProps, nextState: AppState) {
+        if (nextState.theme) {
+            changeTheme(nextState.theme);
+        }
+    }
+
+    async highlightSelection() {
         let self = this;
         let messages = self.refs.messages as MessageList;
         let spinner = self.refs.spinner as Progress;
@@ -83,6 +85,35 @@ export default class App extends React.Component<AppProps, AppState> {
         });
     }
 
+    async copySnippet() {
+        let self = this;
+        let messages = self.refs.messages as MessageList;
+        let spinner = self.refs.spinner as Progress;
+        let snippet= self.refs.snippet as Snippet;
+
+        return Word.run(async context => {
+            // Clear any previous errors
+            messages.clear();
+            spinner.show();
+
+            // Get the text and add it the the document
+            let {text} = snippet.code;
+            await insertHighlightedText(context, text);
+
+            spinner.hide();
+            console.log('Copied code snippet.');
+            messages.addMessage('Copied code snippet.', MessageBarType.success);
+        })
+        .catch(function (error) {
+            spinner.hide();
+            messages.addMessage(error.message, MessageBarType.warning);
+            console.log('Error: ' + JSON.stringify(error));
+            if (error instanceof OfficeExtension.Error) {
+                console.log('Debug info: ' + JSON.stringify(error.debugInfo));
+            }
+        });
+    }
+
     handleSetLanguage(event) {
         this.setState({language: event.target.value});
 
@@ -96,14 +127,6 @@ export default class App extends React.Component<AppProps, AppState> {
 
         let settings = Office.context.document.settings;
         settings.set("theme", event.target.value);
-        settings.saveAsync();
-    }
-
-    handleSetHighlightColor(event) {
-        this.setState({setHighlightColor: event.target.checked});
-
-        let settings = Office.context.document.settings;
-        settings.set("setHighlightColor", event.target.checked);
         settings.saveAsync();
     }
 
@@ -136,8 +159,35 @@ export default class App extends React.Component<AppProps, AppState> {
 
         return (
             <div className='ms-welcome'>
-                <Header message='Settings' />
+                <Header message='Easy Syntax Highlighter' />
                 <div className='ms-welcome__main ms-u-fadeIn500'>
+                    <p>The <em>Easy Syntax Highlighter</em> allows you to apply syntax highlighting to code
+                    blocks in your Word document.</p>
+                    <p>It will automatically detect the programming langugage of your code block and
+                    there are 89 styles to choose from.</p>
+
+                    <h3>Instructions</h3>
+                    <ol>
+                        <li>
+                            Add some code to your Word document.
+                        </li>
+                        <li>
+                            Select the code block you want to highlight.
+                        </li>
+                        <li>
+                            Press the Highlight Selection button.
+                        </li>
+                    </ol>
+
+                    <PrimaryButton className='ms-welcome__action'
+                            iconProps={{ iconName: 'ChevronRight' }}
+                            onClick={this.highlightSelection}
+                            text="Highlight Selection" />
+
+                    <Progress message='Working' enabled={false} ref='spinner'/>
+                    <MessageList ref='messages'/>
+
+                    <h3>Settings</h3>
                     <div className="ms-Grid" dir="ltr">
                         <div className="ms-Grid-row">
                             <div className="ms-Grid-col ms-sm4 ms-md4 ms-lg4">
@@ -160,29 +210,14 @@ export default class App extends React.Component<AppProps, AppState> {
                             </div>
                         </div>
                     </div>
-                    <div className="ms-Grid" dir="ltr">
-                        <div className="ms-Grid-row">
-                            <div className="ms-Grid-col ms-sm10 ms-md10 ms-lg10">
-                                <label className="ms-label">Color Background:</label>
-                            </div>
-                            <div className="ms-Grid-col ms-sm2 ms-md2 ms-lg2">
-                                <input id="highlight"
-                                       type="checkbox"
-                                       checked={this.state.setHighlightColor}
-                                       onChange={this.handleSetHighlightColor} />
-                            </div>
-                        </div>
+
+                    <div className="preview">
+                        <h3>Preview</h3>
+                        <DefaultButton
+                            text='Copy to document'
+                            onClick={this.copySnippet}/>
+                        <Snippet ref='snippet' language={this.state.language}/>
                     </div>
-
-                    <Button className='ms-welcome__action'
-                            buttonType={ButtonType.primary}
-                            iconProps={{ iconName: 'ChevronRight' }}
-                            onClick={this.click}>
-                        Highlight Selection
-                    </Button>
-
-                    <Progress message='Working' enabled={false} ref='spinner'/>
-                    <MessageList ref='messages'/>
                 </div>
             </div>
         );

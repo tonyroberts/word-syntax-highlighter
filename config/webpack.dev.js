@@ -6,7 +6,7 @@ const commonConfig = require('./webpack.common.js');
 
 module.exports = webpackMerge(commonConfig, {
     target: 'web',
-    devtool: 'eval-source-map',
+    devtool: 'inline-cheap-source-map',
     devServer: {
         publicPath: '/',
         contentBase: path.resolve('dist'),

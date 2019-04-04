@@ -30,6 +30,16 @@
   }
 }
 
+.code-snippet {
+  border: 1px solid #ddd;
+  width: 100%;
+
+  code {
+    max-height: 250px;
+  }
+}
+
+
 html,
 body {
   width: 100%;
@@ -111,10 +121,53 @@ body {
       text-align: center;
     }
 
+    h3 {
+      padding-top: 10px;
+      padding-bottom: 10px;
+      width: 100%;
+      text-align: left;
+    }
+
     select {
       width: 100%;
       margin-top: 2px;
       margin-bottom:2px;
+    }
+
+    input {
+      vertical-align: middle;
+    }
+
+    p {
+      padding: 10px;
+      overflow: visible;
+      width: 100%;
+    }
+
+    ol {
+      list-style-type: decimal;
+
+      li {
+        padding: 2px;
+      }
+    }
+
+    button {
+      overflow: visible;
+      padding: 15px;
+    }
+
+    .preview {
+      position: relative;
+      margin-top: 30px;
+      width: 100%;
+
+      button {
+        position: absolute;
+        margin-top: 5px;
+        top: 0px;
+        right: 0px;
+      }
     }
   }
 

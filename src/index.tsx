@@ -13,7 +13,7 @@ initializeIcons();
 
 let isOfficeInitialized = false;
 
-const title = 'Syntax Highlighter';
+const title = 'Easy Syntax Highlighter';
 
 const render = (Component) => {
     ReactDOM.render(

@@ -11,12 +11,12 @@ import 'office-ui-fabric-react/dist/css/fabric.min.css';
 
 initializeIcons();
 
-const title = 'Word Syntax Highlighter';
+const title = 'Easy Syntax Highlighter';
 
 const about = `
 ## About
 
-Syntax Highlighting for Microsoft Word.
+Easy Syntax Highlighting for Microsoft Word.
 
 - 185 languages and 89 styles
 - Automatic language detection
@@ -29,7 +29,7 @@ and styles.
 
 ## Usage
 
-The add-in adds a new tab 'Syntax Highlighter' to the Word ribbon.
+The add-in adds a new tab 'Easy Syntax Highlighter' to the Word ribbon.
 
 Select the code you want highlighted in your Word document and press the 'Highlight Selection' button
 to apply syntax highlighting.
@@ -42,13 +42,9 @@ tab of the ribbon.
 
 If the language you are using is not automatically recognized, change it from the settings menu.
 
-Some themes specify the text background color of the text. If you want this background color to be
-set from the theme, check the 'Color Background' option in the syntax highlighter settings. Usually if you want
-to set the background color, you will want to add your text to a text box.
-
 ## Software Disclaimer
 
-The Syntax Highlighter add-in is provided "as is" without warranty of any kind. Use at your own risk.
+The Easy Syntax Highlighter add-in is provided "as is" without warranty of any kind. Use at your own risk.
 
 The use of the software is done at your own discretion and risk and with
 agreement that you will be solely responsible for any damage to your
@@ -74,6 +70,12 @@ indirect or consequential damages of any kind, or any damages whatsoever, includ
 those resulting from loss of use, data or profits, and on any theory of liability, arising out of
 or in connection with the use of this software.
 
+## Privacy Policy
+
+We do not store or process your data in any way.
+
+The Easy Syntax Highlighter add-in for Word does not collect or send any data.
+
 ## Support
 
 For getting in touch regarding a bug or further queries, please
@@ -82,7 +84,15 @@ use the *email developer* button. If this feature is not working, please email
 
 ## Copyright
 
-Copyright PyXLL Ltd, 2019. All rights reserved.
+### Easy Syntax Highlighter
+
+Copyright (c) 2019, PyXLL Ltd. All rights reserved.
+
+### highlight.js
+
+The Easy Syntax /Highgter Word add-in uses [highlight.js](https://highlightjs.org).
+
+Copyright (c) 2006, Ivan Sagalaev. All rights reserved.
 `;
 
 const render = () => {

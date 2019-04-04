@@ -16,8 +16,8 @@
   <ProviderName>Tony Roberts</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
   <!-- The display name of your add-in. Used on the store and various places of the Office UI such as the add-ins dialog. -->
-  <DisplayName DefaultValue="Syntax Highlighter" />
-  <Description DefaultValue="Syntax highlighting for Word"/>
+  <DisplayName DefaultValue="Easy Syntax Highlighter" />
+  <Description DefaultValue="Apply syntax highlighting to code blocks in Word"/>
 
   <!-- Icon for your add-in. Used on installation screens and the add-ins dialog. -->
   <IconUrl DefaultValue="https://app.pyxll.com/word-syntax-highlighter/assets/highlight-32.png" />

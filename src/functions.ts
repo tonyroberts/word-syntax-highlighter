@@ -4,7 +4,7 @@
  */
 
 import * as highlighter from "./utils/highlighter";
-import * as styles from "./utils/styles";
+//import * as styles from "./utils/styles";
 import {ROOT_URL} from "./globals";
 
 (() => {
@@ -39,35 +39,52 @@ async function highlightSelectionSafe(event) {
     event.completed(true)
 }
 
+/*
+ * Inserts syntax highlighted text.
+ * Uses the current document settings for language and theme selection etc.
+ */
+export async function insertHighlightedText(context, text: string) {
+    // Get the settings
+    let settings = Office.context.document.settings;
+    let language = settings.get("language") || "Auto Detect";
+    let theme = settings.get("theme") || "Default";
+
+    // Highlight as html
+    let html = highlighter.highlight(language, theme, text, null);
+
+    // Write back to Word
+    let thisDocument = context.document;
+    let range = thisDocument.getSelection();
+    let newRange = range.insertHtml(html, Word.InsertLocation.replace);
+    newRange.select(Word.SelectionMode.end);
+    await context.sync();
+
+    // Trim the final char (which is there to make sure the last line ending works)
+    let spaces = newRange.search(' ', {ignoreSpace: false});
+    context.load(spaces);
+    await context.sync();
+
+    if (spaces.items && spaces.items.length > 0) {
+        let lastSpace = spaces.items[spaces.items.length-1];
+        if (lastSpace) {
+            lastSpace.delete();
+        }
+    }
+
+    await context.sync();
+}
 
 /*
  * Applies syntax highlighting to the current selection.
  * Uses the current document settings for language and theme selection etc.
  */
 export async function highlightSelection(context) {
-    let toWordColor = (c) => {
-        c = c.toUpperCase();
-        if (c.length == 4) {
-            c = c[0] + c[1] + c[1] + c[2] + c[2] + c[3] + c[3];
-        }
-        return c;
-    };
-
-    // Create a proxy object for the document.
-    let thisDocument = context.document;
-
-    // Get the settings
-    let settings = Office.context.document.settings;
-    let language = settings.get("language") || "Auto Detect";
-    let theme = settings.get("theme") || "Default";
-    let setHighlightColor = settings.get("setHighlightColor") || false;
-
     // Queue a command to get the current selection.
-    // Create a proxy range object for the selection.
+    let thisDocument = context.document;
     let range = thisDocument.getSelection().getRange(Word.RangeLocation.content);
 
     // Load the content of the range and highlight it
-    context.load(range, ['text', 'font']);
+    context.load(range, ['text']);
     await context.sync();
 
     let text = range.text;
@@ -75,47 +92,6 @@ export async function highlightSelection(context) {
         throw new Error("No text selected");
     }
 
-    // Add the new content at the start of the range to preserve formatting
-    let rangeToClear = range;
-    range = range.getRange(Word.RangeLocation.start);
-
-    let defaultFont = range.font;
-    context.load(defaultFont);
-    await context.sync();
-
-    highlighter.highlight(language, text, (cls, text) => {
-        let newRange = range.insertText(text, Word.InsertLocation.end);
-
-        newRange.font.color = defaultFont.color;
-        newRange.font.bold = false;
-        newRange.font.italic = false;
-
-        if (setHighlightColor) {
-            newRange.font.highlightColor = defaultFont.highlightColor;
-        }
-
-        let style = styles.getStyle(theme, cls);
-
-        if (style) {
-            if (style['color'] && style['color'][0] == '#') {
-                newRange.font.color = toWordColor(style['color']);
-            }
-
-            if (style['font-weight'] && style['font-weight'] == 'bold') {
-                newRange.font.bold = true;
-            }
-
-            if (style['font-style'] && style['font-style'] == 'italic') {
-                newRange.font.italic = true;
-            }
-
-            if (setHighlightColor && style['background'] && style['background'][0] == '#') {
-                newRange.font.highlightColor = toWordColor(style['background']);
-            }
-        }
-    });
-
-    // Once the new content is written, clear the old range
-    rangeToClear.clear();
-    await context.sync();
+    // Replace the current selection with the highlighted text
+    await insertHighlightedText(context, text.trim());
 }

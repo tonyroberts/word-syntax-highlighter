@@ -12,12 +12,12 @@
     <Id>6a8effdb-17d0-4c63-b202-bfa7d9ce6a70</Id>
 
     <!--Version. Updates from the store only get triggered if there is a version change. -->
-    <Version>1.0.0.0</Version>
+    <Version>1.0.0.1</Version>
     <ProviderName>Tony Roberts</ProviderName>
     <DefaultLocale>en-US</DefaultLocale>
     <!-- The display name of your add-in. Used on the store and various places of the Office UI such as the add-ins dialog. -->
-    <DisplayName DefaultValue="Syntax Highlighter" />
-    <Description DefaultValue="Syntax highlighting for Word"/>
+    <DisplayName DefaultValue="Easy Syntax Highlighter (Dev)" />
+    <Description DefaultValue="Apply syntax highlighting to code blocks in Word"/>
 
     <!-- Icon for your add-in. Used on installation screens and the add-ins dialog. -->
     <IconUrl DefaultValue="https://localhost:3000/assets/highlight-32.png" />
