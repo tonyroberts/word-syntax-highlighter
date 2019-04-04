@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { PrimaryButton, DefaultButton } from 'office-ui-fabric-react';
+import { Icon } from 'office-ui-fabric-react/lib/Icon';
 import Header from './Header';
 import Progress from './Progress';
 import {MessageList, MessageBarType} from './MessageList';
@@ -169,7 +170,10 @@ export default class App extends React.Component<AppProps, AppState> {
                     <h3>Instructions</h3>
                     <ol>
                         <li>
-                            Add some code to your Word document.
+                            Add some code to your Word document.<br/>
+                            <span className='tip'>
+                                <Icon iconName="Lightbulb" />Tip: Use the <em>Copy to document</em> button below to quickly test.
+                            </span>
                         </li>
                         <li>
                             Select the code block you want to highlight.

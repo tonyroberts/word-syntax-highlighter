@@ -156,17 +156,17 @@
       </bt:Urls>
       <!-- ShortStrings max characters==125. -->
       <bt:ShortStrings>
-        <bt:String id="PyXLL.WSH.TabLabel" DefaultValue="Syntax Highlighter" />
+        <bt:String id="PyXLL.WSH.TabLabel" DefaultValue="Easy Syntax Highlighter" />
         <bt:String id="PyXLL.WSH.HighlightBtn.Label" DefaultValue="Highlight Selection" />
-        <bt:String id="PyXLL.WSH.TaskpaneButton.Label" DefaultValue="Syntax Highlighter Settings" />
-        <bt:String id="PyXLL.WSH.Group1Label" DefaultValue="Syntax Highlighter" />
-        <bt:String id="PyXLL.WSH.GetStarted.Title" DefaultValue="Syntax Highlighter is now available" />
+        <bt:String id="PyXLL.WSH.TaskpaneButton.Label" DefaultValue="Settings" />
+        <bt:String id="PyXLL.WSH.Group1Label" DefaultValue="Easy Syntax Highlighter" />
+        <bt:String id="PyXLL.WSH.GetStarted.Title" DefaultValue="Easy Syntax Highlighter add-in is now available" />
       </bt:ShortStrings>
       <!-- LongStrings max characters==250. -->
       <bt:LongStrings>
         <bt:String id="PyXLL.WSH.HighlightBtn.Tooltip" DefaultValue="Click to apply syntax highlighting to the current selection" />
-        <bt:String id="PyXLL.WSH.TaskpaneButton.Tooltip" DefaultValue="Click to show the Syntax Highlighter Settings" />
-        <bt:String id="PyXLL.WSH.GetStarted.Description" DefaultValue="The add-in is loaded in the Syntax Highlighter tab. Click the icon to use the add-in." />
+        <bt:String id="PyXLL.WSH.TaskpaneButton.Tooltip" DefaultValue="Click to show the Easy Syntax Highlighter Settings" />
+        <bt:String id="PyXLL.WSH.GetStarted.Description" DefaultValue="The add-in is loaded in the Easy Syntax Highlighter tab. Click the icon to use the add-in." />
       </bt:LongStrings>
     </Resources>
   </VersionOverrides>
