@@ -4,7 +4,7 @@ import * as xmldom from 'xmldom';
 import * as styles from "./styles";
 
 export const languages = {
-    'Auto Detect': null,
+    'Detect Automatically': null,
     '1c': '1c',
     'Abnf': 'abnf',
     'AccessLog': 'accesslog',

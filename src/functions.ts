@@ -46,34 +46,25 @@ async function highlightSelectionSafe(event) {
 export async function insertHighlightedText(context, text: string) {
     // Get the settings
     let settings = Office.context.document.settings;
-    let language = settings.get("language") || "Auto Detect";
+    let language = settings.get("language") || "Detect Automatically";
     let theme = settings.get("theme") || "Default";
 
+    // Make sure the end is a CR followed by a single space.
+    // Word messes us the formatting of the last line, and so this ensures
+    // that all of the code gets formatted correct. If there's no trailing
+    // space, Word doesn't recognize the last line as a line.
+    text = text.trimRight() + '\r ';
+
     // Highlight as html
-    let html = highlighter.highlight(language, theme, text.trimRight(), null);
+    let html = highlighter.highlight(language, theme, text, null);
 
     // Get the current selection and clear any style from it
     let thisDocument = context.document;
     let range = thisDocument.getSelection();
     range.styleBuiltIn = "Normal";  // requires Word API 1.3
 
-    // Write back to Word, including a new line a 4 spaces (otherwise the last
-    // line doesn't get formatted correctly).
-    let newRange = range.insertHtml(html + "\r~", Word.InsertLocation.replace);
-    context.load(newRange);
-    await context.sync();
-
-    // Trim the end marker (which is there to make sure the last line ending works)
-    let markers = newRange.search('~', {ignoreSpace: false});
-    context.load(markers);
-    await context.sync();
-
-    if (markers.items && markers.items.length > 0) {
-        let lastMarker = markers.items[markers.items.length-1];
-        if (lastMarker) {
-            lastMarker.delete();
-        }
-    }
+    // Write the html to Word
+    range.insertHtml(html, Word.InsertLocation.replace);
 
     await context.sync();
 }

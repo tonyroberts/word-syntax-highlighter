@@ -26,7 +26,7 @@ export default class App extends React.Component<AppProps, AppState> {
     constructor(props, context) {
         super(props, context);
         this.state = {
-            language: "Auto Detect",
+            language: "Detect Automatically",
             theme: "Default"
         };
 
