@@ -27,6 +27,7 @@
     "query-string": "^5.1.1",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
+    "react-youtube": "^7.9.0",
     "themes-switch": "^1.0.5",
     "xmldom": "^0.1.27"
   },

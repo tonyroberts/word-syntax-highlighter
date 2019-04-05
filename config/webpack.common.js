@@ -55,6 +55,10 @@ const entry = {
     privacy: [
         'react-hot-loader/patch',
         './privacy.tsx',
+    ],
+    video: [
+        'react-hot-loader/patch',
+        './video.tsx',
     ]
 };
 
@@ -223,6 +227,12 @@ module.exports = {
             filename: 'privacy.html',
             template: './privacy.html',
             chunks: ['privacy', 'vendor', 'polyfills']
+        }),
+        new HtmlWebpackPlugin({
+            title: 'Easy Syntax Highlighter',
+            filename: 'video.html',
+            template: './video.html',
+            chunks: ['video', 'vendor', 'polyfills']
         }),
         new CopyWebpackPlugin([
             {
