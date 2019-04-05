@@ -50,24 +50,28 @@ export async function insertHighlightedText(context, text: string) {
     let theme = settings.get("theme") || "Default";
 
     // Highlight as html
-    let html = highlighter.highlight(language, theme, text, null);
+    let html = highlighter.highlight(language, theme, text.trimRight(), null);
 
-    // Write back to Word
+    // Get the current selection and clear any style from it
     let thisDocument = context.document;
     let range = thisDocument.getSelection();
-    let newRange = range.insertHtml(html, Word.InsertLocation.replace);
-    newRange.select(Word.SelectionMode.end);
+    range.styleBuiltIn = "Normal";  // requires Word API 1.3
+
+    // Write back to Word, including a new line a 4 spaces (otherwise the last
+    // line doesn't get formatted correctly).
+    let newRange = range.insertHtml(html + "\r~", Word.InsertLocation.replace);
+    context.load(newRange);
     await context.sync();
 
-    // Trim the final char (which is there to make sure the last line ending works)
-    let spaces = newRange.search(' ', {ignoreSpace: false});
-    context.load(spaces);
+    // Trim the end marker (which is there to make sure the last line ending works)
+    let markers = newRange.search('~', {ignoreSpace: false});
+    context.load(markers);
     await context.sync();
 
-    if (spaces.items && spaces.items.length > 0) {
-        let lastSpace = spaces.items[spaces.items.length-1];
-        if (lastSpace) {
-            lastSpace.delete();
+    if (markers.items && markers.items.length > 0) {
+        let lastMarker = markers.items[markers.items.length-1];
+        if (lastMarker) {
+            lastMarker.delete();
         }
     }
 
@@ -93,5 +97,5 @@ export async function highlightSelection(context) {
     }
 
     // Replace the current selection with the highlighted text
-    await insertHighlightedText(context, text.trim());
+    await insertHighlightedText(context, text);
 }

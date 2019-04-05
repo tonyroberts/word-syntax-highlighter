@@ -180,13 +180,19 @@ export default class App extends React.Component<AppProps, AppState> {
                         </li>
                         <li>
                             Press the Highlight Selection button.
+                            <span className='tip'>
+                                <Icon iconName="Lightbulb" />Tip: Don't like the colors? Change the <em>Theme</em>
+                                &nbsp;below, reselect your code and try again.
+                            </span>
                         </li>
                     </ol>
 
-                    <PrimaryButton className='ms-welcome__action'
-                            iconProps={{ iconName: 'ChevronRight' }}
-                            onClick={this.highlightSelection}
-                            text="Highlight Selection" />
+                    <div className='text-center'>
+                        <PrimaryButton className='ms-welcome__action'
+                                iconProps={{ iconName: 'ChevronRight' }}
+                                onClick={this.highlightSelection}
+                                text="Highlight Selection" />
+                    </div>
 
                     <Progress message='Working' enabled={false} ref='spinner'/>
                     <MessageList ref='messages'/>

@@ -204,7 +204,7 @@ export function highlight(languageName: string,
 
     // Use highlight.js to get html highlighted version of the text
     var fragment = language ? hljs.highlight(language, text) : hljs.highlightAuto(text);
-    var html = '<div class="hljs"><pre><code>' + fragment.value + '\r\n </code></pre></div>'
+    var html = '<div class="hljs"><pre><code>' + fragment.value + '</code></pre></div>'
 
     // Parse the result into a DOM
     let parser = new xmldom.DOMParser();
