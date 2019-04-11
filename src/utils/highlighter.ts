@@ -272,9 +272,9 @@ export function highlightOoxml(languageName: string,
     var paragraph = body.appendChild(doc.createElementNS(xmlns.w, 'w:p'));
 
     // check if there a main style for this theme
-    let style = styles.getStyle(themeName, 'hljs');
-    if (style) {
-        let bgColor = style['background'];
+    let baseStyle = styles.getStyle(themeName, 'hljs');
+    if (baseStyle) {
+        let bgColor = baseStyle['background'];
         if (bgColor && bgColor[0] == '#') {
             // bgColor can be '#xxx url(...' so only get the color part
             bgColor = bgColor.split(' ', 1)[0].substr(1);
@@ -304,51 +304,53 @@ export function highlightOoxml(languageName: string,
             rFonts.setAttributeNS(xmlns.w, 'w:hAnsi', 'Courier New');
             rFonts.setAttributeNS(xmlns.w, 'w:cs', 'Courier New');
 
+            let style = baseStyle;
             if (cls && cls.search(/^hljs-/) == 0) {
                 let styleId = cls.substr(5)
-                let style = styles.getStyle(themeName, styleId);
-                if (style) {
-                    if (style['color']) {
-                        let color = style['color'];
+                style = styles.getStyle(themeName, styleId);
+            }
 
-                        if (color[0] == '#') {
-                            color = color.substr(1);
-                        }
+            if (style) {
+                if (style['color']) {
+                    let color = style['color'];
 
-                        if (color.length == 3) {
-                            color = color[0] + color[0] + color[1] + color[1] + color[2] + color[2];
-                        }
-
-                        let rColor = runPr.appendChild(doc.createElementNS(xmlns.w, 'w:color'));
-                        rColor.setAttributeNS(xmlns.w, 'w:val', color);
+                    if (color[0] == '#') {
+                        color = color.substr(1);
                     }
 
-                    let bgColor = style['background-color'];
-                    if (bgColor && bgColor[0] == '#') {
-                        bgColor = bgColor.substr(1);
-
-                        if (bgColor.length == 3) {
-                            bgColor = bgColor[0] + bgColor[0] + bgColor[1] + bgColor[1] + bgColor[2] + bgColor[2];
-                        }
-
-                        let rShd = runPr.appendChild(doc.createElementNS(xmlns.w, 'w:shd'));
-                        rShd.setAttributeNS(xmlns.w, 'w:fill', bgColor);
-                        rShd.setAttributeNS(xmlns.w, 'w:color', bgColor);
-                        rShd.setAttributeNS(xmlns.w, 'w:val', 'solid');
+                    if (color.length == 3) {
+                        color = color[0] + color[0] + color[1] + color[1] + color[2] + color[2];
                     }
 
-                    if (style['font-weight']) {
-                        let fontWeight = style['font-weight'];
-                        if (fontWeight == 'bold') {
-                            runPr.appendChild(doc.createElementNS(xmlns.w, 'w:b'));
-                        }
+                    let rColor = runPr.appendChild(doc.createElementNS(xmlns.w, 'w:color'));
+                    rColor.setAttributeNS(xmlns.w, 'w:val', color);
+                }
+
+                let bgColor = style['background-color'];
+                if (bgColor && bgColor[0] == '#') {
+                    bgColor = bgColor.substr(1);
+
+                    if (bgColor.length == 3) {
+                        bgColor = bgColor[0] + bgColor[0] + bgColor[1] + bgColor[1] + bgColor[2] + bgColor[2];
                     }
 
-                    if (style['font-style']) {
-                        let fontStyle = style['font-style'];
-                        if (fontStyle == 'italic') {
-                            runPr.appendChild(doc.createElementNS(xmlns.w, 'w:i'));
-                        }
+                    let rShd = runPr.appendChild(doc.createElementNS(xmlns.w, 'w:shd'));
+                    rShd.setAttributeNS(xmlns.w, 'w:fill', bgColor);
+                    rShd.setAttributeNS(xmlns.w, 'w:color', bgColor);
+                    rShd.setAttributeNS(xmlns.w, 'w:val', 'solid');
+                }
+
+                if (style['font-weight']) {
+                    let fontWeight = style['font-weight'];
+                    if (fontWeight == 'bold') {
+                        runPr.appendChild(doc.createElementNS(xmlns.w, 'w:b'));
+                    }
+                }
+
+                if (style['font-style']) {
+                    let fontStyle = style['font-style'];
+                    if (fontStyle == 'italic') {
+                        runPr.appendChild(doc.createElementNS(xmlns.w, 'w:i'));
                     }
                 }
             }
