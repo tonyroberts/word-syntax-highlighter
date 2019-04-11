@@ -193,6 +193,16 @@ const themes = {
     "Zenburn": zenburn
 }
 
+
+const styleOverrides = {
+    'background': {
+        "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAJ0lEQVQIW2O8e/fufwYGBgZBQUEQxcCIIfDu3Tuwivfv30NUoAsAALHpFMMLqZlPAAAAAElFTkSuQmCC) repeat": {
+            'background-color': '#eee'
+        }
+    }
+};
+
+
 /*
  * Style interface for the individual styles loaded
  * from the CSS files.
@@ -235,7 +245,18 @@ function loadTheme(name: string) {
             }
 
             Object.keys(rule.declarations).forEach((key) => {
-                style[key] = rule.declarations[key];
+                let value = rule.declarations[key];
+                let overrides = styleOverrides[key];
+                if (overrides && overrides[value]) {
+                    // use the override value(s) instead of the actual value
+                    let overrideValues = overrides[value];
+                    Object.keys(overrideValues).forEach((oKey) => {
+                        style[oKey] = overrideValues[oKey];
+                    });
+                }
+                else {
+                    style[key] = rule.declarations[key];
+                }
             });
         });
     });

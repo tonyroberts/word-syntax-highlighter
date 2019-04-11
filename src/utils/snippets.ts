@@ -381,5 +381,5 @@ export function getSnippet(languageName: string): string | null {
         language = languageName;
     }
     let code = snippets[language];
-    return code ? code.default.trim().replace(/\r\n/g, '\n') : null;
+    return code ? code.default.trim().replace(/\r\n/g, '\r') : null;
 }

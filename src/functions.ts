@@ -2,10 +2,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT license.
  * See LICENSE in the project root for license information.
  */
-
 import * as highlighter from "./utils/highlighter";
-//import * as styles from "./utils/styles";
 import {ROOT_URL} from "./globals";
+
 
 (() => {
   // The initialize function must be run each time a new page is loaded
@@ -49,22 +48,16 @@ export async function insertHighlightedText(context, text: string) {
     let language = settings.get("language") || "Detect Automatically";
     let theme = settings.get("theme") || "Default";
 
-    // Make sure the end is a CR followed by a single space.
-    // Word messes us the formatting of the last line, and so this ensures
-    // that all of the code gets formatted correct. If there's no trailing
-    // space, Word doesn't recognize the last line as a line.
-    text = text.trimRight() + '\r ';
+    // Highlight as OOXML
+    let xml = highlighter.highlightOoxml(language, theme, text);
+    console.log(xml);
 
-    // Highlight as html
-    let html = highlighter.highlight(language, theme, text, null);
-
-    // Get the current selection and clear any style from it
+    // Replace the current selection in Word
     let thisDocument = context.document;
-    let range = thisDocument.getSelection();
-    range.styleBuiltIn = "Normal";  // requires Word API 1.3
+    let range = thisDocument.getSelection().getRange(Word.RangeLocation.content) as Word.Range;
 
-    // Write the html to Word
-    range.insertHtml(html, Word.InsertLocation.replace);
+    range.styleBuiltIn = 'Normal';
+    range.insertOoxml(xml, Word.InsertLocation.replace);
 
     await context.sync();
 }
@@ -76,14 +69,17 @@ export async function insertHighlightedText(context, text: string) {
 export async function highlightSelection(context) {
     // Queue a command to get the current selection.
     let thisDocument = context.document;
-    let range = thisDocument.getSelection().getRange(Word.RangeLocation.content);
 
-    // Load the content of the range and highlight it
-    context.load(range, ['text']);
+    let range = thisDocument.getSelection().getRange(Word.RangeLocation.content) as Word.Range;
+
+    // Using Range.text doesn't work in online versions of Office as the line endings are lost.
+    let ranges = range.getTextRanges(['\r'], false);
+
+    context.load(ranges);
     await context.sync();
 
-    let text = range.text;
-    if (!text) {
+    let text = ranges.items.reduce((acc, r) => { return acc + r.text; }, '');
+    if (!text.trim()) {
         throw new Error("No text selected");
     }
 
