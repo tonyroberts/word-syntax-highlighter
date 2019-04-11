@@ -7,8 +7,6 @@ const CompressionPlugin = require('compression-webpack-plugin');
 module.exports = webpackMerge(commonConfig, {
     target: 'web',
 
-    devtool: 'source-map',
-
     mode: 'production',
 
     performance: {
