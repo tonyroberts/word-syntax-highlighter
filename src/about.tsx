@@ -42,6 +42,12 @@ tab of the ribbon.
 
 If the language you are using is not automatically recognized, change it from the settings menu.
 
+## Changelog
+
+- 1.0.1 (2019-09-03)
+
+  Fixed a problem with some keywords not being highlighted (e.g. '#include' in C++).
+
 ## Software Disclaimer
 
 The Easy Syntax Highlighter add-in is provided "as is" without warranty of any kind. Use at your own risk.

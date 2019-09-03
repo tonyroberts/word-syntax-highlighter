@@ -247,7 +247,7 @@ function loadTheme(name: string) {
             Object.keys(rule.declarations).forEach((key) => {
                 let value = rule.declarations[key];
                 let overrides = styleOverrides[key];
-                if (overrides && overrides[value]) {
+                if (overrides && overrides[value] && overrides[value] != 'inherit') {
                     // use the override value(s) instead of the actual value
                     let overrideValues = overrides[value];
                     Object.keys(overrideValues).forEach((oKey) => {
@@ -268,25 +268,34 @@ function loadTheme(name: string) {
 /*
  * Returns the style for a token type with a specific theme
  */
-export function getStyle(themeName: string, tokenType: string) {
+export function getStyle(themeName: string, tokenType: string, includeBase: boolean = true) {
     let theme = loadTheme(themeName)
-    let style = {};
 
-    let base = theme["hljs"];
-    if (base) {
-        Object.keys(base).forEach((key) => {
-            style[key] = base[key];
-        });
+    if (includeBase) {
+        let style = {};
+
+        let base = theme["hljs"];
+        if (base) {
+            Object.keys(base).forEach((key) => {
+                style[key] = base[key];
+            });
+        }
+
+        let overrides = theme['hljs-' + tokenType];
+        if (overrides) {
+            Object.keys(overrides).forEach((key) => {
+                style[key] = overrides[key];
+            });
+        }
+
+        return style;
     }
 
-    let overrides = theme['hljs-' + tokenType];
-    if (overrides) {
-        Object.keys(overrides).forEach((key) => {
-            style[key] = overrides[key];
-        });
+    if (tokenType == 'hljs') {
+        return theme['hljs'];
     }
 
-    return style;
+    return theme['hljs-' + tokenType];
 }
 
 /*
